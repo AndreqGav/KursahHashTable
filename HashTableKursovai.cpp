@@ -29,6 +29,7 @@ int main()
 void testTable(THash_Table &table)
 {
 	cout << "Добавить/Удалить/Найти/Редактировать/Записать в файл/выйти? A/D/F/C/W/E" << endl; // add,delete,find,change,exit
+
 	char answer;
 	cin >> answer;
 
