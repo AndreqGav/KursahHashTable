@@ -21,6 +21,7 @@ struct Node
 
 class THash_Table
 {
+
 private:
 	//Кол-во элементов в таблице
 	int N;
@@ -33,6 +34,7 @@ private:
 	const int c = 3, d = 9;
 	//Кол-во занесенных элементов в таблицу
 	int count_Items;
+
 public:
 	//Конструктор
 	THash_Table(int N);

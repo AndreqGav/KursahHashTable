@@ -31,6 +31,7 @@ void THash_Table::insert(Data data)
 		return;
 	}
 	int hkey = hashKey(data.key);
+
 	//шаг коллизии
 	int i = 0;
 	while (table[hkey].status == 1)//Пока ячейка занята - двигаемся дальше
@@ -38,6 +39,7 @@ void THash_Table::insert(Data data)
 		hkey = (hkey + c + d * i*i) % (2 * N);
 		++i;
 	}
+
 	//Заполняем ячейку массива
 	table[hkey].data = data;
 	table[hkey].status = 1;
