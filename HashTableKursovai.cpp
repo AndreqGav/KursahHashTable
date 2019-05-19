@@ -136,6 +136,7 @@ void testTable(THash_Table &table)
 		break;
 	}
 	default:
+		cout << endl << endl;
 		testTable(table);
 		break;
 	}
