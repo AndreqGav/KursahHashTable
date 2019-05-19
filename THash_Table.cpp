@@ -45,7 +45,6 @@ void THash_Table::insert(Data data)
 	table[hkey].status = 1;
 
 	count_Items++;
-
 }
 
 Data* THash_Table::find(int key)
