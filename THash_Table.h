@@ -4,19 +4,19 @@
 
 using namespace std;
 
-struct Data
+struct Tltеm //Данные
 {
-	//Имя,Фамилия
-	string Name, FirstName;
-	//Номер зачетки
-	int key;
+	string data;
 };
+
+typedef int Tkey;
 
 struct Node
 {
-	Data data;
-	//Состояние 0-свободно,1-занято,-1 - удален
-	int status;
+	Tltеm itеm;
+	Tkey key;
+
+	int status;//Состояние 0-свободно,1-занято,-1 - удален
 };
 
 class THash_Table
@@ -29,7 +29,7 @@ private:
 	Node *table;
 
 	//Хеш-Функция
-	int hashKey(int key);
+	int hashKey(Tkey key);
 	//Определяем константы для квадратичного пробирования
 	const int c = 3, d = 9;
 	//Кол-во занесенных элементов в таблицу
@@ -41,11 +41,13 @@ public:
 	//Инициализация таблицы
 	void initTable(string fileName);
 	//Сохранение данных в файл
-	void SaveTable(string fileName);
+	void WriteTable(string fileName);
 	//Добавление эл-та
-	void insert(Data data);
+	bool Insert(Node node);
 	//Поиск по ключу
-	Data* find(int key);
+	bool Find(Tkey key, Tltеm &item);
 	//Удаление по ключу
-	void del(int key);
+	bool Delete(Tkey key);
+	// Полученuе размера хеш-таблицы
+	int GetSize();
 };

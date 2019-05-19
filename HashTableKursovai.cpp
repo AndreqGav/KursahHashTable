@@ -23,61 +23,63 @@ int main()
 	THash_Table table = THash_Table(n);
 	table.initTable("input.txt");
 
-	testTable(table);
+	testTable(table); // функция для тестирования таблицы
 }
 
 void testTable(THash_Table &table)
 {
-	cout << "Добавить/Удалить/Найти/Редактировать/Записать в файл/выйти? A/D/F/C/W/E" << endl; // add,delete,find,change,exit
+	cout << "Добавить/Удалить/Найти/Получть размер/Записать в файл/выйти? A/D/F/S/W/E" << endl; // add,delete,find,exit
 
 	char answer;
 	cin >> answer;
 
-	answer = (char)toupper(answer);
+	answer = (char)toupper(answer); // преобразовать в старший регистр
 
 	switch (answer)
 	{
-	case 'A':
+	case 'A': // добавление элемента
 	{
-		string Name, FirstName;
+		Node node;
 		int key;
-		cout << "Веддите: Имя Фамилия №зачетки" << endl;
-		cin >> Name;
-		cin >> FirstName;
-		cin >> key;
+		cout << "Веддите: данные ключ" << endl;
+		cin >> node.itеm.data;
+		cin >> node.key;
 
-		Data _data;
-
-		_data.Name = Name;
-		_data.FirstName = FirstName;
-		_data.key = key;
-
-		table.insert(_data);
-
-
+		if (table.Insert(node)) {
+			cout << "Элемент " << node.itеm.data << " успешно добавлен" << endl;
+		}
+		else
+		{
+			cout << "Ошибка добавления!" << endl;
+		}
 		break;
 	}
-	case 'D':
+	case 'D': // удаление элемента
 	{
-		int key;
-		cout << "Веддите: №зачетки" << endl;
+		Tkey key;
+		cout << "Веддите: ключ" << endl;
 		cin >> key;
 
-		table.del(key);
+		if (table.Delete(key))
+		{
+			cout << "Элемент с ключом " << key << " успешно удален" << endl;
+		}
+		else
+		{
+			cout << "Невозможно удалить элемент с ключом " << key << endl;
+		}
 		break;
 	}
-	case 'F':
+	case 'F': // посик жлемента по ключу
 	{
-		int key;
-		cout << "Веддите: №зачетки" << endl;
+		Tkey key;
+		cout << "Веддите: ключ" << endl;
 		cin >> key;
 
-		Data* _data;
+		Tltеm item;
 
-		_data = table.find(key);
-
-		if (_data != NULL) {
-			cout << _data->Name << "  " << _data->FirstName << "  " << _data->key << endl;
+		if (table.Find(key, item)) {
+			cout <<"Элемент: " << item.data << endl;
 		}
 		else
 		{
@@ -86,51 +88,23 @@ void testTable(THash_Table &table)
 
 		break;
 	}
-	case 'C':
-	{
-
-		int key;
-		cout << "Веддите: №зачетки" << endl;
-		cin >> key;
-
-		Data* _data;
-
-		_data = table.find(key);
-
-		if (_data != NULL) {
-			string Name, FirstName;
-			cout <<"Исходный:  " << _data->Name << "  " << _data->FirstName << "  " << _data->key << endl;
-			cout << "Введите новые данные: имя фамилия(или -, если оставить неизменным поле)" << endl;
-			cin >> Name;
-			cin >> FirstName;
-
-			if (Name != "-")
-			{
-				_data->Name = Name;
-			}
-			if (FirstName != "-")
-			{
-				_data->FirstName = FirstName;
-			}
-		}
-		else
-		{
-			cerr << "Ключ не найден!" << endl;
-		}
-
-		break;
-	}
-	case 'W':
+	case 'W': // запись таблицы в текствый файл
 	{
 		string fileName;
-		cout << "Введите имя файла:" << endl;
+		cout << "Введите имя файла(с расширением):" << endl;
 		cin >> fileName;
 
-		table.SaveTable(fileName);
+		table.WriteTable(fileName);
 
 		break;
 	}
-	case 'E':
+	case 'S': // получение размера таблицы
+	{
+		cout << "Размер: " << table.GetSize() << endl;
+		break;
+	}
+
+	case 'E': // выход из тестируемой функции
 	{
 		return;
 		break;

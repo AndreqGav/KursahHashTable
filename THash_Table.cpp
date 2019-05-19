@@ -3,98 +3,104 @@
 #include<fstream>
 #include <iostream>
 
-int THash_Table::hashKey(int key)
+int THash_Table::hashKey(Tkey key)
 {
 	return key % N;
 }
 
 THash_Table::THash_Table(int n)
 {
-	N = n;
+	N = n; // установить размер таблицы
 	table = new Node[2 * N];
+	// инициализировать данные
 	for (int i = 0; i < 2 * N; ++i)
 		table[i].status = 0;
 
 	count_Items = 0;
 }
 
-void THash_Table::insert(Data data)
+bool THash_Table::Insert(Node node) // функция вставки
 {
-	if (count_Items > N)
+	if (count_Items >= N) // если таблица заполнена
 	{
 		std::cerr << "Таблица переполнена!" << endl;
-		return;
+		return false;
 	}
-	if (find(data.key) != NULL)
-	{
-		std::cerr << "Элемент с таким ключом уже существет!" << endl;
-		return;
-	}
-	int hkey = hashKey(data.key);
+
+	int hkey = hashKey(node.key); // получить индекс
 
 	//шаг коллизии
 	int i = 0;
 	while (table[hkey].status == 1)//Пока ячейка занята - двигаемся дальше
 	{
-		hkey = (hkey + c + d * i*i) % (2 * N);
+		if (table[hkey].key == node.key) // есди элемент с таким ключом уже есть
+		{
+			std::cerr <<  "Элемент с ключом " << node.key << " уже существет!" << endl;
+			return false;
+		}
+
+		hkey = (hkey + c + d * i*i) % (2 * N); // если снова коллизия - изменить индекс
 		++i;
 	}
 
 	//Заполняем ячейку массива
-	table[hkey].data = data;
-	table[hkey].status = 1;
+	node.status = 1;
+	table[hkey] = node;
 
-	count_Items++;
+	count_Items++; // увеличить счетчки элементов
+	return true;
 }
 
-Data* THash_Table::find(int key)
+bool THash_Table::Find(Tkey key, Tltеm &item) // функция поиска
 {
-	int hkey = hashKey(key);
+	int hkey = hashKey(key); // получить инедкс из хеш-функции
 	//шаг коллизии
 	int i = 0;
-	while (table[hkey].status == 1)
+	while (table[hkey].status != 0) // пока не дойдём до пустого поля
 	{
-		if (table[hkey].data.key == key)
-			return &table[hkey].data;
-		hkey = (hkey + c + d * i*i) % (2 * N);
+		if (table[hkey].key == key && table[hkey].status == 1) { // если нашли ключ и он не удалён
+			item = table[hkey].itеm;
+			return true;
+		}
+		hkey = (hkey + c + d * i*i) % (2 * N); // если коллизия - перейти к след. элементу
 		++i;
 	}
-	return NULL;
+	return false;
 }
 
-void THash_Table::del(int key)
+bool THash_Table::Delete(Tkey key) // функция удаления
 {
 	int hkey = hashKey(key);
 	//шаг коллизии
 	int i = 0;
-	while (table[hkey].status)
+	while (table[hkey].status != 0) // пока не дойдём до пустого поля
 	{
-		if (table[hkey].data.key == key)
+		if (table[hkey].key == key && table[hkey].status == 1) // если нашли элемент
 		{
 			table[hkey].status = -1;
 			count_Items--;
-			break;
+			return true;
 		}
-		hkey = (hkey + c + d * i*i) % (2 * N);
+		hkey = (hkey + c + d * i*i) % (2 * N); // индекс следующего поля
 		++i;
 	}
+	return false;
 }
 
-void THash_Table::initTable(string fileName)
+void THash_Table::initTable(string fileName) // Инициализация таблицы из файла
 {
-	ifstream ifile(fileName);
-	Data data;
+	ifstream ifile(fileName); 
+	Node node;
 	while (!ifile.eof() && count_Items < N)
 	{
-		ifile >> data.Name;
-		ifile >> data.FirstName;
-		ifile >> data.key;
+		ifile >> node.itеm.data;
+		ifile >> node.key;
 
-		insert(data);
+		Insert(node);
 	}
 }
 
-void THash_Table::SaveTable(string fileName)
+void THash_Table::WriteTable(string fileName) // Запись таблицы в файл
 {
 	ofstream ofile(fileName);
 
@@ -102,10 +108,24 @@ void THash_Table::SaveTable(string fileName)
 	{
 		if (table[i].status)
 		{
-			ofile << table[i].data.Name << '\t';
-			ofile << table[i].data.FirstName << '\t';
-			ofile << table[i].data.key << '\t';
+			ofile << table[i].itеm.data << '\t';
+			ofile << table[i].key << '\t';
 			ofile << '\n';
 		}
 	}
+}
+
+int THash_Table::GetSize() // получение размера таблицы
+{// заодно посчитаем кол-во свободных и занятых ячеек
+
+	int count = 0; // 
+	for (int i = 0; i < 2 * N; ++i)
+	{
+		if (table[i].status == 1)
+			count++;
+	}
+	cout << "Занято: " << count << endl;
+	cout << "Свободно: " << N - count << endl;
+
+	return N;
 }
